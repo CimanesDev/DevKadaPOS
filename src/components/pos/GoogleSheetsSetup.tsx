@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { InfoIcon } from "lucide-react";
+import { Info } from "lucide-react";
 
 interface GoogleSheetsSetupProps {
   onSave: (url: string) => void;
@@ -37,7 +37,7 @@ export const GoogleSheetsSetup = ({ onSave, currentUrl }: GoogleSheetsSetupProps
       </CardHeader>
       <CardContent className="space-y-4">
         <Alert>
-          <InfoIcon className="h-4 w-4" />
+          <Info className="h-4 w-4" />
           <AlertDescription>
             <strong>Setup Instructions:</strong>
             <ol className="list-decimal list-inside mt-2 space-y-1 text-sm">

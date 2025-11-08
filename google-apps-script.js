@@ -41,7 +41,7 @@ const LOW_STOCK_THRESHOLD = 5; // Alert when stock is at or below this number
 // AI Agent Configuration
 const GEMINI_API_KEY = "AIzaSyAmJfQLk4wrLrjhwyYBocBUw8vDclOYb2Q"; // Get from https://makersuite.google.com/app/apikey
 const VERIFY_TOKEN = "SSS_POS_AGENT"; // Random string for webhook verification - CHANGE THIS!
-const AI_MODEL = "gemini-1.5-flash"; // or "gemini-1.5-pro" for better quality
+const AI_MODEL = "gemini-2.5-flash"; // or "gemini-1.5-pro" for better quality
 
 // Email Configuration (for sending reports)
 const ADMIN_EMAIL = "cimanesdev@gmail.com"; // Email to send reports to
@@ -138,6 +138,22 @@ function doGet(e) {
 
     if (action === "getStockReport") {
       const result = getStockReport();
+      return createCorsResponse(JSON.stringify(result));
+    }
+
+    // Add processMessage support for GET requests (to avoid CORS preflight)
+    if (action === "processMessage") {
+      let data = {};
+      if (e.parameter.data) {
+        try {
+          data = JSON.parse(e.parameter.data);
+        } catch (parseError) {
+          return createCorsResponse(
+            JSON.stringify({ success: false, error: "Invalid data format" })
+          );
+        }
+      }
+      const result = processUserMessage(data);
       return createCorsResponse(JSON.stringify(result));
     }
 
@@ -625,9 +641,15 @@ function processAndRespondToMessage(senderId, userMessage) {
 
     Logger.log("Generated response: " + response);
 
-    // Step 3: Send response via Messenger
-    const sendResult = sendMessengerMessageToUser(senderId, response);
-    Logger.log("Send result: " + JSON.stringify(sendResult));
+    // Step 3: Send response via Messenger (only if not a web user)
+    // Web users (senderId === "web-user") will get the response in the return value
+    let sendResult = null;
+    if (senderId !== "web-user" && senderId !== "web") {
+      sendResult = sendMessengerMessageToUser(senderId, response);
+      Logger.log("Send result: " + JSON.stringify(sendResult));
+    } else {
+      Logger.log("Web user detected, skipping Messenger send");
+    }
 
     return { 
       success: true, 
@@ -639,9 +661,18 @@ function processAndRespondToMessage(senderId, userMessage) {
   } catch (error) {
     Logger.log("ERROR in processAndRespondToMessage: " + error.toString());
     Logger.log("Stack: " + error.stack);
-    const errorResult = sendMessengerMessageToUser(senderId, "Sorry, I encountered an error. Please try again.");
-    Logger.log("Error message send result: " + JSON.stringify(errorResult));
-    return { success: false, error: error.toString() };
+    
+    // Only send error via Messenger if not a web user
+    if (senderId !== "web-user" && senderId !== "web") {
+      const errorResult = sendMessengerMessageToUser(senderId, "Sorry, I encountered an error. Please try again.");
+      Logger.log("Error message send result: " + JSON.stringify(errorResult));
+    }
+    
+    return { 
+      success: false, 
+      error: error.toString(),
+      response: "Sorry, I encountered an error. Please try again."
+    };
   }
 }
 
@@ -1240,9 +1271,15 @@ function processAndRespondToMessage(senderId, userMessage) {
 
     Logger.log("Generated response: " + response);
 
-    // Step 3: Send response via Messenger
-    const sendResult = sendMessengerMessageToUser(senderId, response);
-    Logger.log("Send result: " + JSON.stringify(sendResult));
+    // Step 3: Send response via Messenger (only if not a web user)
+    // Web users (senderId === "web-user") will get the response in the return value
+    let sendResult = null;
+    if (senderId !== "web-user" && senderId !== "web") {
+      sendResult = sendMessengerMessageToUser(senderId, response);
+      Logger.log("Send result: " + JSON.stringify(sendResult));
+    } else {
+      Logger.log("Web user detected, skipping Messenger send");
+    }
 
     return { 
       success: true, 
@@ -1254,9 +1291,18 @@ function processAndRespondToMessage(senderId, userMessage) {
   } catch (error) {
     Logger.log("ERROR in processAndRespondToMessage: " + error.toString());
     Logger.log("Stack: " + error.stack);
-    const errorResult = sendMessengerMessageToUser(senderId, "Sorry, I encountered an error. Please try again.");
-    Logger.log("Error message send result: " + JSON.stringify(errorResult));
-    return { success: false, error: error.toString() };
+    
+    // Only send error via Messenger if not a web user
+    if (senderId !== "web-user" && senderId !== "web") {
+      const errorResult = sendMessengerMessageToUser(senderId, "Sorry, I encountered an error. Please try again.");
+      Logger.log("Error message send result: " + JSON.stringify(errorResult));
+    }
+    
+    return { 
+      success: false, 
+      error: error.toString(),
+      response: "Sorry, I encountered an error. Please try again."
+    };
   }
 }
 

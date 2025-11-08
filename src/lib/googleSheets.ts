@@ -12,6 +12,7 @@
  */
 
 import { Product } from "@/types/pos";
+import { LowStockAlert } from "@/lib/messenger";
 
 const getGoogleSheetsUrl = () => {
   // Check environment variable first, then localStorage
@@ -150,6 +151,39 @@ export const getProductsWithStock = async (): Promise<Array<{ id: string; stock:
     return result.products || [];
   } catch (error) {
     console.error("Error fetching stock:", error);
+    return [];
+  }
+};
+
+/**
+ * Check for low stock products
+ * Note: Since Google Apps Script uses POST with no-cors, we fetch all products
+ * and filter client-side for low stock items
+ */
+export const checkLowStock = async (threshold: number = 5): Promise<LowStockAlert[]> => {
+  const GOOGLE_SHEETS_URL = getGoogleSheetsUrl();
+  if (!GOOGLE_SHEETS_URL) {
+    console.warn("Google Sheets URL not configured");
+    return [];
+  }
+
+  try {
+    // Fetch all products and filter for low stock client-side
+    // (since POST with no-cors doesn't allow reading response)
+    const products = await getProducts();
+    
+    const lowStockProducts: LowStockAlert[] = products
+      .filter((product) => product.stock !== undefined && product.stock <= threshold && product.stock > 0)
+      .map((product) => ({
+        productId: product.id,
+        productName: product.name,
+        currentStock: product.stock || 0,
+        threshold: threshold,
+      }));
+
+    return lowStockProducts;
+  } catch (error) {
+    console.error("Error checking low stock:", error);
     return [];
   }
 };

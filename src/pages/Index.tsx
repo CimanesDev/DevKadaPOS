@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Header } from "@/components/pos/Header";
 import { ProductGrid } from "@/components/pos/ProductGrid";
 import { Cart } from "@/components/pos/Cart";
@@ -9,11 +9,17 @@ import { Product, CartItem } from "@/types/pos";
 import { toast } from "sonner";
 import { useProducts } from "@/hooks/useProducts";
 import { recordTransaction } from "@/lib/googleSheets";
+import { LowStockAlert } from "@/lib/messenger";
 
-const Index = () => {
+interface IndexProps {
+  onNavigateToMessenger?: () => void;
+}
+
+const Index = ({ onNavigateToMessenger }: IndexProps) => {
   const { products, isLoading, updateProductStock } = useProducts();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [tender, setTender] = useState<number>(0);
+  const [checkedLowStock, setCheckedLowStock] = useState(false);
 
   const handleProductSelect = useCallback(
     (product: Product) => {
@@ -149,12 +155,28 @@ const Index = () => {
       const result = await recordTransaction(saleRecord, stockUpdates);
 
       if (result.saleRecorded && result.stockUpdated) {
-        // Update local stock
+        // Update local stock and check for low stock alerts
+        const LOW_STOCK_THRESHOLD = 5;
         stockUpdates.forEach((update) => {
           const product = products.find((p) => p.id === update.productId);
           if (product) {
             const newStock = (product.stock ?? 0) - update.quantity;
-            updateProductStock(update.productId, Math.max(0, newStock));
+            const finalStock = Math.max(0, newStock);
+            updateProductStock(update.productId, finalStock);
+
+            // Check if stock is low and trigger alert
+            if (finalStock <= LOW_STOCK_THRESHOLD) {
+              const alert: LowStockAlert = {
+                productId: update.productId,
+                productName: update.productName,
+                currentStock: finalStock,
+                threshold: LOW_STOCK_THRESHOLD,
+              };
+              
+              // Dispatch custom event for Messenger chat
+              const event = new CustomEvent("lowStockAlert", { detail: alert });
+              window.dispatchEvent(event);
+            }
           }
         });
 
@@ -190,9 +212,31 @@ const Index = () => {
     });
   };
 
+  // Check for low stock products on initial load
+  useEffect(() => {
+    if (!isLoading && products.length > 0 && !checkedLowStock) {
+      const LOW_STOCK_THRESHOLD = 5;
+      products.forEach((product) => {
+        if (product.stock !== undefined && product.stock <= LOW_STOCK_THRESHOLD) {
+          const alert: LowStockAlert = {
+            productId: product.id,
+            productName: product.name,
+            currentStock: product.stock,
+            threshold: LOW_STOCK_THRESHOLD,
+          };
+          
+          // Dispatch custom event for Messenger chat
+          const event = new CustomEvent("lowStockAlert", { detail: alert });
+          window.dispatchEvent(event);
+        }
+      });
+      setCheckedLowStock(true);
+    }
+  }, [products, isLoading, checkedLowStock]);
+
   return (
     <div className="h-screen w-screen flex flex-col bg-background overflow-hidden">
-      <Header />
+      <Header onNavigateToMessenger={onNavigateToMessenger} />
 
       <main className="flex-1 flex flex-col lg:flex-row gap-3 md:gap-4 p-3 md:p-4 overflow-hidden min-h-0">
         {/* Product Grid - Responsive width */}

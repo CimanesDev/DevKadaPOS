@@ -1,20 +1,16 @@
 import { useState, useEffect } from "react";
-import { Wifi, WifiOff, Settings } from "lucide-react";
+import { Wifi, WifiOff, ExternalLink, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { GoogleSheetsSetup } from "./GoogleSheetsSetup";
 
-export const Header = () => {
+const GOOGLE_SHEETS_URL = "https://docs.google.com/spreadsheets/d/1411z-DAy1gvgpSFwDoGVZRxKBycXgKf9c45PEENSBPg/edit?usp=sharing";
+
+interface HeaderProps {
+  onNavigateToMessenger?: () => void;
+}
+
+export const Header = ({ onNavigateToMessenger }: HeaderProps) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isOnline, setIsOnline] = useState(true);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -77,26 +73,27 @@ export const Header = () => {
           )}
         </div>
 
-        <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
-          <DialogTrigger asChild>
-            <Button variant="outline" size="icon" className="h-9 w-9">
-              <Settings className="h-4 w-4" />
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>Settings</DialogTitle>
-              <DialogDescription>Configure your POS system settings</DialogDescription>
-            </DialogHeader>
-            <GoogleSheetsSetup
-              onSave={(url) => {
-                setIsSettingsOpen(false);
-                window.location.reload();
-              }}
-              currentUrl={localStorage.getItem("googleSheetsUrl") || undefined}
-            />
-          </DialogContent>
-        </Dialog>
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-2"
+          onClick={() => window.open(GOOGLE_SHEETS_URL, "_blank", "noopener,noreferrer")}
+        >
+          <span className="text-xs">View Spreadsheet</span>
+          <ExternalLink className="h-3.5 w-3.5" />
+        </Button>
+
+        {onNavigateToMessenger && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            onClick={onNavigateToMessenger}
+          >
+            <MessageSquare className="h-3.5 w-3.5" />
+            <span className="text-xs">Alerts</span>
+          </Button>
+        )}
       </div>
     </header>
   );
