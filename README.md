@@ -6,32 +6,64 @@ A modern, touch-optimized Point of Sale (POS) system designed specifically for S
 
 ### Core POS Features
 - **Touch-Optimized Interface**: Designed for tablet and mobile use with large, easy-to-tap buttons
+- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
 - **Real-Time Inventory Management**: Products and stock levels synced with Google Sheets
 - **Fast Transaction Processing**: Quick checkout with automatic stock updates
-- **Category-Based Product Display**: Organize products by categories (Snacks, Beverages, Cigarettes, etc.)
-- **Cart Management**: Add, update quantities, and remove items easily
+- **Category-Based Product Display**: Organize products by categories (Snacks, Beverages, Cigarettes, Groceries, Personal Care, etc.)
+- **Smart Cart Management**: 
+  - Add products with a single tap
+  - Update quantities with +/- buttons
+  - Remove items easily
+  - Real-time subtotal calculation
+- **Stock Validation**: Prevents selling out-of-stock items and alerts when stock is insufficient
 - **Change Calculation**: Automatic change calculation based on cash tendered
+- **Transaction History**: All sales automatically recorded to Google Sheets
+- **Direct Spreadsheet Access**: "View Spreadsheet" button opens your Google Sheet in a new tab to see live data
 
-### AI-Powered Assistant
-- **Google Gemini Integration**: Natural language processing for intelligent queries
-- **Sales Reports**: Ask questions like "How much sales did we get today?"
-- **Stock Status**: Get real-time inventory information
-- **Low Stock Alerts**: Automatic notifications when products run low
-- **Product Information**: Query specific product details
+### AI-Powered Assistant (Google Gemini)
+- **Natural Language Processing**: Ask questions in plain English
+- **Sales Analytics**: 
+  - "How much sales did we get today?"
+  - "Show me this week's sales report"
+  - "What's our total revenue this month?"
+- **Stock Intelligence**:
+  - "What products are low in stock?"
+  - "How many Coca-Cola do we have?"
+  - "Show me stock status"
+- **Product Information**: Query specific product details by name
 - **Conversational Interface**: Chat naturally with the AI assistant
+- **Intent Recognition**: Understands context and provides relevant answers
+- **Multi-Period Reports**: Supports today, week, and month timeframes
+- **Web Chat Interface**: Chat with AI directly from the web app
+- **Messenger Integration**: Same AI assistant available via Facebook Messenger
 
-### Messenger Integration
-- **Real-Time Alerts**: Low stock notifications sent directly to Facebook Messenger
-- **Alert Mirroring**: The Alert page in the web app reflects what the owner sees in their Messenger chat
-- **Automatic Monitoring**: System checks stock levels every 30 seconds
+### Messenger Integration & Alert System
+- **Dual Interface**: The **Alerts page** in the web app is a live mirror of your Facebook Messenger chat
+- **Real-Time Alert Sync**: Low stock notifications appear simultaneously in both Messenger and the web app
+- **Automatic Low Stock Detection**: 
+  - Monitors stock levels every 30 seconds
+  - Checks on initial page load
+  - Triggers alerts immediately after sales when stock drops below threshold
+- **Smart Alert Deduplication**: Each product shows only one alert (prevents spam)
 - **Threshold-Based Alerts**: Configurable low stock threshold (default: 5 units)
+- **Urgency Indicators**: 
+  - 🚨 OUT OF STOCK (0 units)
+  - ⚠️ CRITICAL (1-2 units)
+  - ⚠️ LOW STOCK (3-5 units)
+- **Alert History**: View all past alerts with timestamps
+- **Manual Refresh**: Refresh button to manually check for new alerts
+- **Chat History**: All AI conversations from Messenger appear in the web app
 
 ### Google Sheets Integration
-- **Live Data Sync**: All transactions and inventory updates sync to Google Sheets
+- **Live Data Sync**: All transactions and inventory updates sync in real-time
 - **Three-Sheet Structure**: 
   - **Products**: Product catalog with ID, Name, Price, Category, Stock
-  - **Sales**: Transaction history with detailed item breakdown
-  - **Stock**: Stock movement tracking
+  - **Sales**: Complete transaction history with detailed item breakdown, timestamps, and payment info
+  - **Stock**: Stock movement tracking with last updated timestamps
+- **Automatic Stock Updates**: Stock levels decrease automatically when sales are completed
+- **Transaction Recording**: Every sale is logged with full details
+- **Data Persistence**: All data stored securely in Google Sheets
+- **Easy Access**: Direct link to spreadsheet from the POS interface
 
 ## 🚀 Getting Started
 
@@ -143,11 +175,28 @@ The AI assistant uses Google Gemini to understand natural language queries and p
 
 Once configured, you can ask the AI assistant questions like:
 
+**Sales Questions:**
 - "How much sales did we get today?"
-- "Show me this week's sales report"
+- "Show me today's sales report"
+- "What's our total revenue this week?"
+- "How many transactions did we have this month?"
+
+**Stock Questions:**
 - "What products are low in stock?"
+- "Show me stock status"
 - "How many Coca-Cola do we have?"
-- "What's our total revenue this month?"
+- "Which products are out of stock?"
+- "Check low stock items"
+
+**Product Questions:**
+- "Tell me about Coca-Cola"
+- "What's the price of Royal?"
+- "How much stock do we have for Piattos?"
+
+**General Questions:**
+- "What can you help me with?"
+- "Give me a summary of today's business"
+- "What do I need to restock?"
 
 ## 📱 Messenger Integration (Optional)
 
@@ -175,12 +224,30 @@ The system can send low stock alerts directly to your Facebook Messenger. The **
 
 ### How It Works
 
-- **Automatic Alerts**: When stock falls below the threshold (default: 5 units), the system automatically sends a Messenger alert
-- **Alert Mirroring**: The Alerts page in the web app shows the same messages you receive in Messenger
-- **Real-Time Sync**: Both Messenger and the web app receive alerts simultaneously
-- **AI Responses**: When you chat with the AI in Messenger, those conversations also appear in the web app's Alerts page
+**Alert System:**
+- **Automatic Detection**: When stock falls below the threshold (default: 5 units), the system automatically detects it
+- **Multi-Trigger Points**:
+  - After each sale completion
+  - On initial page load (checks all products)
+  - Every 30 seconds (automatic periodic check)
+- **Deduplication**: Each product shows only one alert to prevent spam
+- **Dual Delivery**: Alerts are sent to both Messenger (if configured) and appear in the web app
 
-**Note**: The Alerts page is a live reflection of your Messenger chat. Any low stock alerts, AI responses, or notifications you receive in Messenger will appear in the web app, and vice versa.
+**Alert Mirroring:**
+- **Live Reflection**: The Alerts page in the web app is a real-time mirror of your Messenger chat
+- **Synchronized Content**: 
+  - Low stock alerts appear in both places simultaneously
+  - AI chat conversations from Messenger appear in the web app
+  - Web app chat conversations can also be viewed in Messenger
+- **Unified Experience**: Whether you check Messenger on your phone or the Alerts page on your computer, you see the same information
+
+**AI Chat Integration:**
+- **Web Interface**: Chat with AI directly from the Alerts page
+- **Messenger Interface**: Same AI available via Facebook Messenger
+- **Shared Context**: Conversations are accessible from both interfaces
+- **Real-Time Responses**: AI queries your Google Sheets data and provides instant answers
+
+**Important Note**: The Alerts page is designed to reflect what the store owner sees in their Messenger chat. This allows you to monitor your store's alerts and chat with the AI assistant from any device, whether you're using the web app or checking Messenger on your phone. The system ensures you never miss important low stock notifications.
 
 ## 🏗️ Project Structure
 
@@ -240,18 +307,67 @@ sari-swift-till/
 
 ### Making a Sale
 
-1. **Select Products**: Tap products from the grid to add them to the cart
-2. **Review Cart**: Check items and quantities in the transaction panel
-3. **Enter Payment**: Type the cash amount in the "Cash Tendered" field
-4. **Complete Sale**: Click "Complete Sale" to process the transaction
-5. **Automatic Updates**: Stock levels update automatically in Google Sheets
+1. **Select Products**: 
+   - Tap products from the grid to add them to the cart
+   - Products are organized by categories (use category filter)
+   - Out-of-stock items are disabled
+2. **Review Cart**: 
+   - Check items and quantities in the transaction panel (right side)
+   - Update quantities using +/- buttons
+   - Remove items with the X button
+   - View real-time subtotal
+3. **Enter Payment**: 
+   - Type the cash amount in the "Cash Tendered" field
+   - Change is calculated automatically
+   - System validates that cash is sufficient
+4. **Complete Sale**: 
+   - Click "Complete Sale" to process the transaction
+   - Transaction is recorded to Google Sheets
+   - Stock levels update automatically
+   - Low stock alerts trigger if stock falls below threshold
+5. **Automatic Updates**: 
+   - Stock decreases in Google Sheets
+   - Sale is logged in Sales tab
+   - Stock movement tracked in Stock tab
+   - Low stock alerts sent to Messenger (if configured)
 
-### Viewing Alerts
+### Viewing Alerts & Chatting with AI
 
-1. Click the **"Alerts"** button in the header
-2. View all low stock alerts and AI chat messages
-3. The page shows the same content as your Messenger chat
-4. Chat with the AI assistant directly from the web interface
+1. **Access Alerts Page**:
+   - Click the **"Alerts"** button in the header (MessageSquare icon)
+   - Navigate to the dedicated Alerts/Messenger page
+
+2. **Understanding the Alert Page**:
+   - **Purpose**: This page reflects what the store owner sees in their Facebook Messenger chat
+   - **Live Mirror**: All low stock alerts, AI responses, and notifications that appear in Messenger also appear here
+   - **Real-Time Sync**: Updates happen automatically as events occur
+
+3. **Viewing Alerts**:
+   - Low stock alerts appear as chat messages with product details
+   - Alerts are grouped by date with timestamps
+   - Each product shows only one alert (no duplicates)
+   - Urgency levels are clearly indicated (OUT OF STOCK, CRITICAL, LOW STOCK)
+
+4. **Chatting with AI**:
+   - Type your question in the input field at the bottom of the page
+   - Press Enter or click the Send button
+   - AI responds with real-time data from your Google Sheets
+   - Loading indicator shows while AI processes your request
+   - Chat history is preserved and grouped by date
+
+5. **Example Questions You Can Ask**:
+   - "How much sales did we get today?"
+   - "Show me this week's sales report"
+   - "What products are low in stock?"
+   - "How many Coca-Cola do we have?"
+   - "What's our total revenue this month?"
+   - "Which products need restocking?"
+
+6. **Automatic Monitoring**:
+   - System automatically checks for low stock every 30 seconds
+   - New alerts appear in real-time
+   - Click "Refresh" button to manually check for alerts
+   - Initial load checks all products for low stock
 
 ### Accessing Spreadsheet
 
@@ -361,15 +477,38 @@ For issues and questions:
 - Review the Google Apps Script logs
 - Check browser console for errors
 
+## 🔄 Real-Time Features
+
+### Automatic Stock Monitoring
+- **Continuous Monitoring**: System checks stock levels every 30 seconds
+- **Sale-Triggered Checks**: Immediately after each sale completion
+- **Initial Load Check**: Scans all products when the page first loads
+- **Smart Deduplication**: Prevents duplicate alerts for the same product
+
+### Live Data Synchronization
+- **Instant Updates**: Stock changes reflect immediately in Google Sheets
+- **Transaction Logging**: Every sale is recorded with full details
+- **Bidirectional Sync**: Changes in Google Sheets appear in the POS system
+- **No Manual Refresh Needed**: Data updates automatically
+
+### Alert System
+- **Multi-Channel Delivery**: Alerts appear in both Messenger and web app
+- **Urgency Classification**: Different alert levels based on stock quantity
+- **Historical Tracking**: All alerts are saved with timestamps
+- **Owner Visibility**: Alerts page shows exactly what owner sees in Messenger
+
 ## 🎯 Future Enhancements
 
 - [ ] Multi-store support
-- [ ] Advanced reporting and analytics
-- [ ] Barcode scanning
-- [ ] Receipt printing
-- [ ] Customer management
-- [ ] Loyalty programs
+- [ ] Advanced reporting and analytics with charts
+- [ ] Barcode scanning for faster product entry
+- [ ] Receipt printing functionality
+- [ ] Customer management system
+- [ ] Loyalty programs and customer rewards
 - [ ] Multi-language support (Tagalog, English)
+- [ ] Voice commands for hands-free operation
+- [ ] Offline mode with sync when online
+- [ ] Export reports to PDF/Excel
 
 ---
 
