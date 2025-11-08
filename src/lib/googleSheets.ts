@@ -60,7 +60,7 @@ export const recordSale = async (sale: SaleRecord): Promise<boolean> => {
     const encodedData = encodeURIComponent(JSON.stringify(sale));
     const url = `${GOOGLE_SHEETS_URL}?action=recordSale&data=${encodedData}`;
     
-    const response = await fetch(url, {
+    await fetch(url, {
       method: "POST",
       mode: "no-cors", // Google Apps Script handles this
     });
@@ -88,7 +88,7 @@ export const updateStock = async (updates: StockUpdate[]): Promise<boolean> => {
     const encodedData = encodeURIComponent(JSON.stringify({ updates }));
     const url = `${GOOGLE_SHEETS_URL}?action=updateStock&data=${encodedData}`;
     
-    const response = await fetch(url, {
+    await fetch(url, {
       method: "POST",
       mode: "no-cors", // Google Apps Script handles this
     });

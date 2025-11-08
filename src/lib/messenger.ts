@@ -39,7 +39,7 @@ export const checkLowStock = async (threshold: number = 5): Promise<boolean> => 
     const encodedData = encodeURIComponent(JSON.stringify({ threshold }));
     const url = `${GOOGLE_SHEETS_URL}?action=checkLowStock&data=${encodedData}`;
     
-    const response = await fetch(url, {
+    await fetch(url, {
       method: "POST",
       mode: "no-cors",
     });
@@ -65,7 +65,7 @@ export const sendLowStockAlert = async (alert: LowStockAlert): Promise<boolean> 
     const encodedData = encodeURIComponent(JSON.stringify(alert));
     const url = `${GOOGLE_SHEETS_URL}?action=sendLowStockAlert&data=${encodedData}`;
     
-    const response = await fetch(url, {
+    await fetch(url, {
       method: "POST",
       mode: "no-cors",
     });
